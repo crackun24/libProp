@@ -3,24 +3,115 @@
 using namespace std;
 using namespace libProp;
 
-Value::Value(std::string* data)
+void libProp::Value::CheckType(ValType type)
 {
-	this->mType = ValueType;
-	this->mVal = data;
+	if (this->mType != type)
+		throw runtime_error("type error.");
 }
 
-Value::Value(std::vector<std::string>* array)
+Value::Value(string data)
+{
+	this->mType = ValueType;
+	this->mData = data;
+}
+
+Value::Value(vector<Value> array)
 {
 	this->mType = ArrayType;//设置为数组的类型
-	this->mArray = array;
+	this->mArray = move(array);
+}
+
+libProp::Value::operator int()
+{
+	try {
+		return stoi(this->mData);
+	}
+	catch (const exception& e)
+	{
+		throw runtime_error(errMsgPrefix + e.what());
+	}
+}
+
+Value::operator double()
+{
+	try {
+		return stod(this->mData);
+	}
+	catch (const exception& e)
+	{
+		throw runtime_error(errMsgPrefix + e.what());
+	}
+}
+
+Value::operator float() {
+	try {
+		return stof(this->mData);
+	}
+	catch (const exception& e)
+	{
+		throw runtime_error(errMsgPrefix + e.what());
+	}
+}
+
+Value::operator long long()
+{
+	try {
+		return stoll(this->mData);
+	}
+	catch (const exception& e){
+		throw runtime_error(errMsgPrefix + e.what());
+	}
+}
+
+Value libProp::Value::operator[](int index)
+{
+	try {
+		CheckType(ArrayType);//判断是否为数组的类型
+		Value temp = this->mArray.at(index);//获取数组下标的内容
+		return temp;//返回获取的内容
+	}
+	catch (const exception& e)
+	{
+		throw runtime_error(errMsgPrefix + e.what());
+	}
+}
+
+int libProp::Value::size()
+{
+	try {
+		CheckType(ArrayType);//判断是否为数组的类型
+		return this->mArray.size();//返回数组的大小
+	}
+	catch (const exception& e)
+	{
+		throw runtime_error(errMsgPrefix + e.what());
+	}
+}
+
+Value::operator long()
+{
+	try {
+		return stol(this->mData);
+	}
+	catch (const exception& e)
+	{
+		throw runtime_error(errMsgPrefix + e.what());
+	}
+}
+
+Value::operator string()
+{
+	try {
+		return this->mData;
+	}
+	catch (const exception& e)
+	{
+		throw runtime_error(errMsgPrefix + e.what());
+	}
 }
 
 Value::~Value()
 {
-	if (this->mType == ValType::ValueType)//为数据类型
-		delete this->mVal;//释放数据资源
-	else if (this->mType == ValType::ArrayType)
-		delete this->mArray;
 }
 
 void Config::ParseLineStr(std::string& data)
@@ -37,7 +128,7 @@ void Config::ParseLineStr(std::string& data)
 		valData.erase(0, 1);
 		valData.pop_back();//删除末尾元素
 
-		vector<string>* temp = new vector<string>;
+		vector<Value> temp;
 		while (valData != "")//没有提取完毕则一直循环提取
 		{
 			auto pos = valData.find(",");//获取分隔符的位置
@@ -51,17 +142,16 @@ void Config::ParseLineStr(std::string& data)
 				tempVal = valData.substr(0, pos);
 				valData.erase(0, pos + 1);//删除包括分隔符的的已解析元素
 			}
-			EraseFBSpace(tempVal);//删除前后的空格
-			temp->push_back(tempVal);
+			temp.push_back(tempVal);//插入元素
 		}
-
-		Value* val = new Value(temp);
-		this->mConfMap.insert(make_pair(keyData, val));//插入键值映射关系
+		Value tempVal(move(temp));
+		this->mConfMap.insert(make_pair(keyData, move(tempVal)));
 	}
 	else {
-		Value* temp = new Value(new string(valData));
-		this->mConfMap.insert(make_pair(keyData, temp));
+		Value tempVal(move(valData));
+		this->mConfMap.insert(make_pair(keyData, move(tempVal)));
 	}
+
 }
 
 
@@ -99,7 +189,7 @@ Config::~Config()
 {
 }
 
-Value* Config::operator[](const std::string& key)
+Value Config::operator[](const std::string& key)
 {
 	shared_lock<shared_mutex>lg(this->mLocker);
 	return this->mConfMap[key];
@@ -110,3 +200,4 @@ void libProp::EraseFBSpace(std::string& data)
 	data.erase(0, data.find_first_not_of(" "));//删除前面的空格
 	data = data.substr(0, data.find_last_not_of(" ") + 1);//删除后面的空格
 }
+
