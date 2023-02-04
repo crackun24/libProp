@@ -22,7 +22,7 @@ namespace libProp {
 	};//数据类型的枚举
 
 
-	class EXEC_TYPE Value {//数据类 
+	class Value {//数据类 
 	private:
 		ValType mType;//数据类型
 		union
@@ -31,13 +31,15 @@ namespace libProp {
 			std::vector<std::string>* mArray;//指向数组的指针
 		};
 	public:
-		Value(std::string& data);//数值类型的构造函数
-		Value(std::vector<std::string>& array);//数组类型的构造函数
+		Value(std::string* data);//数值类型的构造函数
+		Value(std::vector<std::string>* array);//数组类型的构造函数
 		Value(Value& val);//拷贝构造函数
+		template<typename T>
+		T as();//返回特定类型的值
 		~Value();//析构函数,释放堆区的资源
 	};
 
-	class EXEC_TYPE Config//配置对象
+	class Config//配置对象
 	{
 	private:
 		std::map<std::string, Value*>mConfMap;//配置文件映射表
@@ -50,6 +52,12 @@ namespace libProp {
 		~Config();
 		Value* operator[](const std::string& key);//用key获取val指针
 	};
+
+	template<typename T>
+	inline T Value::as()
+	{
+		return static_cast<T>(*this->mVal);
+	}
 }
 
 #endif // LIBPROP_

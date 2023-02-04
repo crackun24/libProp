@@ -3,22 +3,16 @@
 using namespace std;
 using namespace libProp;
 
-libProp::Value::Value(std::string& data)
+Value::Value(std::string* data)
 {
 	this->mType = ValueType;
-	string* temp = new string(data);//构造位于堆区的 string 对象
+	this->mVal = data;
 }
 
-libProp::Value::Value(std::vector<std::string>& array)
+Value::Value(std::vector<std::string>* array)
 {
 	this->mType = ArrayType;//设置为数组的类型
-	vector<string>* temp = new vector<string>(array);//构造数组对象
-	this->mArray = temp;
-}
-
-libProp::Value::Value(Value& val)
-{
-
+	this->mArray = array;
 }
 
 Value::~Value()
@@ -29,7 +23,7 @@ Value::~Value()
 		delete this->mArray;
 }
 
-void libProp::Config::ParseLineStr(std::string& data)
+void Config::ParseLineStr(std::string& data)
 {
 	if (data == "" || data.find("=") == string::npos)//判断是否为有效的行
 		return;//不是有效行返回
@@ -37,15 +31,35 @@ void libProp::Config::ParseLineStr(std::string& data)
 	string& valData = data.substr(data.find("=") + 1);//获取等号后面的数据
 	EraseFBSpace(keyData);//去除前面的空格
 	EraseFBSpace(valData);//去除后面的空格
-	
+
 	if (*valData.begin() == '[')//判断是否以数组的格式开头
 	{
 		valData.erase(0, 1);
 		valData.pop_back();//删除末尾元素
 
+		vector<string>* temp = new vector<string>;
+		while (valData != "")//没有提取完毕则一直循环提取
+		{
+			auto pos = valData.find(",");//获取分隔符的位置
+			string tempVal;
+			if (pos == string::npos)//判断是否有分隔符
+			{
+				tempVal = valData;
+				valData.clear();//没有分隔符则为最后一个元素
+			}
+			else {
+				tempVal = valData.substr(0, pos);
+				valData.erase(0, pos + 1);//删除包括分隔符的的已解析元素
+			}
+			EraseFBSpace(tempVal);//删除前后的空格
+			temp->push_back(tempVal);
+		}
+
+		Value* val = new Value(temp);
+		this->mConfMap.insert(make_pair(keyData, val));//插入键值映射关系
 	}
 	else {
-		Value *temp = new Value(valData);
+		Value* temp = new Value(new string(valData));
 		this->mConfMap.insert(make_pair(keyData, temp));
 	}
 }
@@ -72,16 +86,16 @@ Config Config::Parse(std::string&& filePath)
 	}
 }
 
-libProp::Config::Config(Config& conf)
+Config::Config(Config& conf)
 {
 	this->mConfMap = conf.mConfMap;
 }
 
-libProp::Config::Config()
+Config::Config()
 {
 }
 
-libProp::Config::~Config()
+Config::~Config()
 {
 }
 
