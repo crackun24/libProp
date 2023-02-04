@@ -168,7 +168,7 @@ Config Config::Parse(std::string&& filePath)
 		{
 			conf.ParseLineStr(temp);//解析单行数据
 		}
-		return conf;
+		return move(conf);
 	}
 	catch (const exception& e)
 	{
