@@ -8,6 +8,7 @@ int main()
 {
 	try {
 		libProp::Config conf = libProp::Config::Parse("./Config.properties");
+		//getchar();
 	}
 	catch (const exception& e)
 	{
