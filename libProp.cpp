@@ -21,6 +21,7 @@ Value::Value(vector<Value> array)
 	this->mArray = move(array);
 }
 
+
 libProp::Value::operator int()
 {
 	try {
@@ -179,6 +180,13 @@ Config Config::Parse(std::string&& filePath)
 Config::Config(Config& conf)
 {
 	this->mConfMap = conf.mConfMap;
+}
+
+Config libProp::Config::operator=(Config& conf)
+{
+	shared_lock<shared_mutex>lg(conf.mLocker);//锁住要拷贝的对象
+	this->mConfMap = conf.mConfMap;
+	return *this;
 }
 
 Config::Config()
