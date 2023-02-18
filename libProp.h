@@ -53,11 +53,11 @@ namespace libProp {
 	{
 	private:
 		std::map<std::string, Value>mConfMap;//配置文件映射表
-		std::shared_mutex mLocker;//互斥锁
 		void ParseLineStr(std::string& data);//解析一行数据
 	public:
 		static Config Parse(std::string&& filePath);//解析配置文件
 		Config(Config& conf);//拷贝构造函数
+		Config(Config&& conf);//移动构造函数
 		Config operator=(Config &conf);//等号赋值函数
 		Config();//构造函数
 		~Config();

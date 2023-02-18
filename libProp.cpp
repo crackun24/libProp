@@ -182,9 +182,13 @@ Config::Config(Config& conf)
 	this->mConfMap = conf.mConfMap;
 }
 
+libProp::Config::Config(Config&& conf)
+{
+	this->mConfMap = move(conf.mConfMap);
+}
+
 Config libProp::Config::operator=(Config& conf)
 {
-	shared_lock<shared_mutex>lg(conf.mLocker);//锁住要拷贝的对象
 	this->mConfMap = conf.mConfMap;
 	return *this;
 }
@@ -199,7 +203,6 @@ Config::~Config()
 
 Value Config::operator[](const std::string& key)
 {
-	shared_lock<shared_mutex>lg(this->mLocker);
 	return this->mConfMap[key];
 }
 
