@@ -58,7 +58,7 @@ namespace libProp {
 		static Config Parse(std::string&& filePath);//解析配置文件
 		Config(Config& conf);//拷贝构造函数
 		Config(Config&& conf);//移动构造函数
-		Config operator=(Config &conf);//等号赋值函数
+		Config operator=(Config& conf);//等于号重载函数
 		Config();//构造函数
 		~Config();
 		Value operator[](const std::string& key);//用key获取val指针
