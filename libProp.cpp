@@ -182,10 +182,6 @@ Config::Config(Config& conf)
 	this->mConfMap = conf.mConfMap;
 }
 
-libProp::Config::Config(Config&& conf)
-{
-	this->mConfMap = move(conf.mConfMap);
-}
 
 Config libProp::Config::operator=(Config& conf)
 {
