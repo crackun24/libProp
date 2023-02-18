@@ -56,8 +56,8 @@ namespace libProp {
 		void ParseLineStr(std::string& data);//解析一行数据
 	public:
 		static Config Parse(std::string&& filePath);//解析配置文件
-		Config(Config& conf);//拷贝构造函数
-		Config operator=(Config& conf);//等于号重载函数
+		Config(const Config& conf);//拷贝构造函数
+		Config operator=(const Config& conf);//等于号重载函数
 		Config();//构造函数
 		~Config();
 		Value operator[](const std::string& key);//用key获取val指针

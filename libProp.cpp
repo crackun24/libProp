@@ -177,13 +177,13 @@ Config Config::Parse(std::string&& filePath)
 	}
 }
 
-Config::Config(Config& conf)
+Config::Config(const Config& conf)
 {
 	this->mConfMap = conf.mConfMap;
 }
 
 
-Config libProp::Config::operator=(Config& conf)
+Config libProp::Config::operator=(const Config& conf)
 {
 	this->mConfMap = conf.mConfMap;
 	return *this;
