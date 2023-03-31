@@ -5,3 +5,5 @@
 /out/build
 /.vs
 /CMakePresets.json
+/cmake-build-debug
+/.idea

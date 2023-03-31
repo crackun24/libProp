@@ -111,6 +111,27 @@ Value::operator string()
 	}
 }
 
+Value::operator bool()
+{
+	try
+	{
+		if(this->mData == "true")
+		{
+			return true;
+		}else if(this->mData == "false")
+		{
+			return false;
+		}else//数据不合法
+		{
+			throw runtime_error("invalid bool data.");
+		}
+		
+	}catch (const exception &e)
+	{
+		throw runtime_error(errMsgPrefix + e.what());
+	}
+}
+
 Value::~Value()
 {
 }

@@ -39,6 +39,7 @@ namespace libProp {
 		operator float();//转换为float的函数
 		operator long long();//转换为long long 的函数
 		operator std::string();//转换为字符串
+		operator bool();//转换为bool的函数
 		Value operator [](int index);//获取该位置的数组的内容
 		int size();//获取数组的大小
 
