@@ -1,4 +1,4 @@
-#include "libProp.h"
+ï»¿#include "libProp.h"
 
 using namespace std;
 using namespace libProp;
@@ -17,7 +17,7 @@ Value::Value(string data)
 
 Value::Value(vector<Value> array)
 {
-	this->mType = ArrayType;//ÉèÖÃÎªÊı×éµÄÀàĞÍ
+	this->mType = ArrayType;//è®¾ç½®ä¸ºæ•°ç»„çš„ç±»å‹
 	this->mArray = move(array);
 }
 
@@ -78,9 +78,9 @@ Value::operator std::string()
 Value libProp::Value::operator[](int index)
 {
 	try {
-		CheckType(ArrayType);//ÅĞ¶ÏÊÇ·ñÎªÊı×éµÄÀàĞÍ
-		Value temp = this->mArray.at(index);//»ñÈ¡Êı×éÏÂ±êµÄÄÚÈİ
-		return temp;//·µ»Ø»ñÈ¡µÄÄÚÈİ
+		CheckType(ArrayType);//åˆ¤æ–­æ˜¯å¦ä¸ºæ•°ç»„çš„ç±»å‹
+		Value temp = this->mArray.at(index);//è·å–æ•°ç»„ä¸‹æ ‡çš„å†…å®¹
+		return temp;//è¿”å›è·å–çš„å†…å®¹
 	}
 	catch (const exception& e)
 	{
@@ -91,8 +91,8 @@ Value libProp::Value::operator[](int index)
 int libProp::Value::size()
 {
 	try {
-		CheckType(ArrayType);//ÅĞ¶ÏÊÇ·ñÎªÊı×éµÄÀàĞÍ
-		return this->mArray.size();//·µ»ØÊı×éµÄ´óĞ¡
+		CheckType(ArrayType);//åˆ¤æ–­æ˜¯å¦ä¸ºæ•°ç»„çš„ç±»å‹
+		return this->mArray.size();//è¿”å›æ•°ç»„çš„å¤§å°
 	}
 	catch (const exception& e)
 	{
@@ -121,7 +121,7 @@ Value::operator bool()
 		}else if(this->mData == "false")
 		{
 			return false;
-		}else//Êı¾İ²»ºÏ·¨
+		}else//æ•°æ®ä¸åˆæ³•
 		{
 			throw runtime_error("invalid bool data.");
 		}
@@ -138,33 +138,33 @@ Value::~Value()
 
 void Config::ParseLineStr(std::string& data)
 {
-	if (data == "" || data.find("=") == string::npos)//ÅĞ¶ÏÊÇ·ñÎªÓĞĞ§µÄĞĞ
-		return;//²»ÊÇÓĞĞ§ĞĞ·µ»Ø
-	string& keyData = data.substr(0, data.find("="));//»ñÈ¡µÈºÅÇ°ÃæµÄÊı¾İ
-	string& valData = data.substr(data.find("=") + 1);//»ñÈ¡µÈºÅºóÃæµÄÊı¾İ
-	EraseFBSpace(keyData);//È¥³ıÇ°ÃæµÄ¿Õ¸ñ
-	EraseFBSpace(valData);//È¥³ıºóÃæµÄ¿Õ¸ñ
+	if (data == "" || data.find("=") == string::npos)//åˆ¤æ–­æ˜¯å¦ä¸ºæœ‰æ•ˆçš„è¡Œ
+		return;//ä¸æ˜¯æœ‰æ•ˆè¡Œè¿”å›
+	string& keyData = data.substr(0, data.find("="));//è·å–ç­‰å·å‰é¢çš„æ•°æ®
+	string& valData = data.substr(data.find("=") + 1);//è·å–ç­‰å·åé¢çš„æ•°æ®
+	EraseFBSpace(keyData);//å»é™¤å‰é¢çš„ç©ºæ ¼
+	EraseFBSpace(valData);//å»é™¤åé¢çš„ç©ºæ ¼
 
-	if (*valData.begin() == '[')//ÅĞ¶ÏÊÇ·ñÒÔÊı×éµÄ¸ñÊ½¿ªÍ·
+	if (*valData.begin() == '[')//åˆ¤æ–­æ˜¯å¦ä»¥æ•°ç»„çš„æ ¼å¼å¼€å¤´
 	{
 		valData.erase(0, 1);
-		valData.pop_back();//É¾³ıÄ©Î²ÔªËØ
+		valData.pop_back();//åˆ é™¤æœ«å°¾å…ƒç´ 
 
 		vector<Value> temp;
-		while (valData != "")//Ã»ÓĞÌáÈ¡Íê±ÏÔòÒ»Ö±Ñ­»·ÌáÈ¡
+		while (valData != "")//æ²¡æœ‰æå–å®Œæ¯•åˆ™ä¸€ç›´å¾ªç¯æå–
 		{
-			auto pos = valData.find(",");//»ñÈ¡·Ö¸ô·ûµÄÎ»ÖÃ
+			auto pos = valData.find(",");//è·å–åˆ†éš”ç¬¦çš„ä½ç½®
 			string tempVal;
-			if (pos == string::npos)//ÅĞ¶ÏÊÇ·ñÓĞ·Ö¸ô·û
+			if (pos == string::npos)//åˆ¤æ–­æ˜¯å¦æœ‰åˆ†éš”ç¬¦
 			{
 				tempVal = valData;
-				valData.clear();//Ã»ÓĞ·Ö¸ô·ûÔòÎª×îºóÒ»¸öÔªËØ
+				valData.clear();//æ²¡æœ‰åˆ†éš”ç¬¦åˆ™ä¸ºæœ€åä¸€ä¸ªå…ƒç´ 
 			}
 			else {
 				tempVal = valData.substr(0, pos);
-				valData.erase(0, pos + 1);//É¾³ı°üÀ¨·Ö¸ô·ûµÄµÄÒÑ½âÎöÔªËØ
+				valData.erase(0, pos + 1);//åˆ é™¤åŒ…æ‹¬åˆ†éš”ç¬¦çš„çš„å·²è§£æå…ƒç´ 
 			}
-			temp.push_back(tempVal);//²åÈëÔªËØ
+			temp.push_back(tempVal);//æ’å…¥å…ƒç´ 
 		}
 		Value tempVal(move(temp));
 		this->mConfMap.insert(make_pair(keyData, move(tempVal)));
@@ -185,10 +185,10 @@ Config Config::Parse(std::string&& filePath)
 			throw runtime_error("Could not open file.");
 
 		string temp;
-		Config conf;//ÅäÖÃÎÄ¼ş¶ÔÏó
-		while (getline(fs, temp))//Ò»ĞĞĞĞ¶ÁÈ¡ÅäÖÃÎÄ¼şĞÅÏ¢
+		Config conf;//é…ç½®æ–‡ä»¶å¯¹è±¡
+		while (getline(fs, temp))//ä¸€è¡Œè¡Œè¯»å–é…ç½®æ–‡ä»¶ä¿¡æ¯
 		{
-			conf.ParseLineStr(temp);//½âÎöµ¥ĞĞÊı¾İ
+			conf.ParseLineStr(temp);//è§£æå•è¡Œæ•°æ®
 		}
 		return move(conf);
 	}
@@ -232,9 +232,14 @@ Value ConfigGuard::operator[](const std::string& key)
 	return this->mConfig[key];
 }
 
-void libProp::EraseFBSpace(std::string& data)
+Value ConfigGuard::GetEntry(const std::string& key)
 {
-	data.erase(0, data.find_first_not_of(" "));//É¾³ıÇ°ÃæµÄ¿Õ¸ñ
-	data = data.substr(0, data.find_last_not_of(" ") + 1);//É¾³ıºóÃæµÄ¿Õ¸ñ
+	lock_guard<shared_mutex>lg(this->mLocker);
+	return this->mConfig[key];
 }
 
+void libProp::EraseFBSpace(std::string& data)
+{
+	data.erase(0, data.find_first_not_of(" "));//åˆ é™¤å‰é¢çš„ç©ºæ ¼
+	data = data.substr(0, data.find_last_not_of(" ") + 1);//åˆ é™¤åé¢çš„ç©ºæ ¼
+}

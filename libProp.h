@@ -1,4 +1,4 @@
-#ifndef LIBPROP_
+ï»¿#ifndef LIBPROP_
 #define LIBPROP_
 
 #ifndef EXEC_TYPE
@@ -15,63 +15,64 @@
 #include <map>
 
 namespace libProp {
-	void EXEC_TYPE EraseFBSpace(std::string& data);//È¥³ı×Ö·û´®Ç°ºóµÄ¿Õ¸ñ
+	void EXEC_TYPE EraseFBSpace(std::string& data);//å»é™¤å­—ç¬¦ä¸²å‰åçš„ç©ºæ ¼
 	enum ValType {
-		ValueType//Êı¾İÀàĞÍ
-		, ArrayType//Êı×éÀàĞÍ
-	};//Êı¾İÀàĞÍµÄÃ¶¾Ù
+		ValueType//æ•°æ®ç±»å‹
+		, ArrayType//æ•°ç»„ç±»å‹
+	};//æ•°æ®ç±»å‹çš„æšä¸¾
 
 
-	class EXEC_TYPE Value {//Êı¾İÀà 
+	class EXEC_TYPE Value {//æ•°æ®ç±» 
 	private:
-		const std::string errMsgPrefix = "libProp:An error occured,error message: ";//´íÎóĞÅÏ¢µÄÇ°×º
-		ValType mType;//Êı¾İÀàĞÍ 
-		std::string mData;//Êı¾İ
-		std::vector<Value>mArray;//Êı×é
-		void CheckType(ValType type);//¼ì²éÀàĞÍÊÇ·ñ·ûºÏ´«ÈëµÄ²ÎÊı,Èô²»·ûºÏÔòÅ×³ö²»·ûºÏµÄÒì³£
+		const std::string errMsgPrefix = "libProp:An error occured,error message: ";//é”™è¯¯ä¿¡æ¯çš„å‰ç¼€
+		ValType mType;//æ•°æ®ç±»å‹ 
+		std::string mData;//æ•°æ®
+		std::vector<Value>mArray;//æ•°ç»„
+		void CheckType(ValType type);//æ£€æŸ¥ç±»å‹æ˜¯å¦ç¬¦åˆä¼ å…¥çš„å‚æ•°,è‹¥ä¸ç¬¦åˆåˆ™æŠ›å‡ºä¸ç¬¦åˆçš„å¼‚å¸¸
 	public:
-		Value(std::string data);//ÊıÖµÀàĞÍµÄ¹¹Ôìº¯Êı
-		Value(std::vector<Value> array);//Êı×éÀàĞÍµÄ¹¹Ôìº¯Êı
-		Value() = default;//ÉèÖÃÎªÄ¬ÈÏµÄ¹¹Ôìº¯Êı
-		operator int();//×ª»»ÎªintµÄº¯Êı
-		operator long();//×ª»»ÎªLongµÄº¯Êı
-		operator double();//×ª»»ÎªdoubleµÄº¯Êı
-		operator float();//×ª»»ÎªfloatµÄº¯Êı
-		operator long long();//×ª»»Îªlong long µÄº¯Êı
-		operator std::string();//×ª»»Îª×Ö·û´®
-		operator bool();//×ª»»ÎªboolµÄº¯Êı
-		Value operator [](int index);//»ñÈ¡¸ÃÎ»ÖÃµÄÊı×éµÄÄÚÈİ
-		int size();//»ñÈ¡Êı×éµÄ´óĞ¡
+		Value(std::string data);//æ•°å€¼ç±»å‹çš„æ„é€ å‡½æ•°
+		Value(std::vector<Value> array);//æ•°ç»„ç±»å‹çš„æ„é€ å‡½æ•°
+		Value() = default;//è®¾ç½®ä¸ºé»˜è®¤çš„æ„é€ å‡½æ•°
+		operator int();//è½¬æ¢ä¸ºintçš„å‡½æ•°
+		operator long();//è½¬æ¢ä¸ºLongçš„å‡½æ•°
+		operator double();//è½¬æ¢ä¸ºdoubleçš„å‡½æ•°
+		operator float();//è½¬æ¢ä¸ºfloatçš„å‡½æ•°
+		operator long long();//è½¬æ¢ä¸ºlong long çš„å‡½æ•°
+		operator std::string();//è½¬æ¢ä¸ºå­—ç¬¦ä¸²
+		operator bool();//è½¬æ¢ä¸ºboolçš„å‡½æ•°
+		Value operator [](int index);//è·å–è¯¥ä½ç½®çš„æ•°ç»„çš„å†…å®¹
+		int size();//è·å–æ•°ç»„çš„å¤§å°
 
 		template<typename T>
 		T as() {
 			return static_cast<T>(*this);
-		}//·µ»ØÌØ¶¨ÀàĞÍµÄÖµ
-		~Value();//Îö¹¹º¯Êı,ÊÍ·Å¶ÑÇøµÄ×ÊÔ´
+		}//è¿”å›ç‰¹å®šç±»å‹çš„å€¼
+		~Value();//ææ„å‡½æ•°,é‡Šæ”¾å †åŒºçš„èµ„æº
 	};
 
-	class EXEC_TYPE Config//ÅäÖÃ¶ÔÏó
+	class EXEC_TYPE Config//é…ç½®å¯¹è±¡
 	{
 	private:
-		std::map<std::string, Value>mConfMap;//ÅäÖÃÎÄ¼şÓ³Éä±í
-		void ParseLineStr(std::string& data);//½âÎöÒ»ĞĞÊı¾İ
+		std::map<std::string, Value>mConfMap;//é…ç½®æ–‡ä»¶æ˜ å°„è¡¨
+		void ParseLineStr(std::string& data);//è§£æä¸€è¡Œæ•°æ®
 	public:
-		static Config Parse(std::string&& filePath);//½âÎöÅäÖÃÎÄ¼ş
-		Config(const Config& conf);//¿½±´¹¹Ôìº¯Êı
-		Config operator=(const Config& conf);//µÈÓÚºÅÖØÔØº¯Êı
-		Config();//¹¹Ôìº¯Êı
+		static Config Parse(std::string&& filePath);//è§£æé…ç½®æ–‡ä»¶
+		Config(const Config& conf);//æ‹·è´æ„é€ å‡½æ•°
+		Config operator=(const Config& conf);//ç­‰äºå·é‡è½½å‡½æ•°
+		Config();//æ„é€ å‡½æ•°
 		~Config();
-		Value operator[](const std::string& key);//ÓÃkey»ñÈ¡valÖ¸Õë
+		Value operator[](const std::string& key);//ç”¨keyè·å–valæŒ‡é’ˆ
 	};
 
-	class EXEC_TYPE ConfigGuard //Ïß³Ì°²È«µÄÅäÖÃ¹ÜÀí¶ÔÏó
+	class EXEC_TYPE ConfigGuard //çº¿ç¨‹å®‰å…¨çš„é…ç½®ç®¡ç†å¯¹è±¡
 	{
 	private:
-		Config mConfig;//Ïß³Ì²»°²È«µÄÅäÖÃÎÄ¼ş¶ÔÏó
-		std::shared_mutex mLocker;//Ïß³Ì°²È«Ëø
+		Config mConfig;//çº¿ç¨‹ä¸å®‰å…¨çš„é…ç½®æ–‡ä»¶å¯¹è±¡
+		std::shared_mutex mLocker;//çº¿ç¨‹å®‰å…¨é”
 	public:
-		ConfigGuard(Config& conf);//¹¹Ôìº¯Êı
-		Value operator[](const std::string& key);//»ñÈ¡val
+		ConfigGuard(Config& conf);//æ„é€ å‡½æ•°
+		Value operator[](const std::string& key);//è·å–val
+		Value GetEntry(const std::string& key);//è·å–val
 	};
 }
 
