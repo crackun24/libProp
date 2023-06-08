@@ -63,6 +63,16 @@ namespace libProp {
 		~Config();
 		Value operator[](const std::string& key);//用key获取val指针
 	};
+
+	class EXEC_TYPE ConfigGuard //线程安全的配置管理对象
+	{
+	private:
+		Config mConfig;//线程不安全的配置文件对象
+		std::shared_mutex mLocker;//线程安全锁
+	public:
+		ConfigGuard(Config& conf);//构造函数
+		Value operator[](const std::string& key);//获取val
+	};
 }
 
 #endif // LIBPROP_

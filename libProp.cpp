@@ -64,6 +64,17 @@ Value::operator long long()
 	}
 }
 
+Value::operator std::string()
+{
+	try {
+		return this->mData;
+	}
+	catch (const exception& e)
+	{
+		throw runtime_error(errMsgPrefix + e.what());
+	}
+}
+
 Value libProp::Value::operator[](int index)
 {
 	try {
@@ -93,17 +104,6 @@ Value::operator long()
 {
 	try {
 		return stol(this->mData);
-	}
-	catch (const exception& e)
-	{
-		throw runtime_error(errMsgPrefix + e.what());
-	}
-}
-
-Value::operator string()
-{
-	try {
-		return this->mData;
 	}
 	catch (const exception& e)
 	{
@@ -221,6 +221,15 @@ Config::~Config()
 Value Config::operator[](const std::string& key)
 {
 	return this->mConfMap[key];
+}
+
+ConfigGuard::ConfigGuard(Config& conf):mConfig(conf)
+{}
+
+Value ConfigGuard::operator[](const std::string& key)
+{
+	lock_guard<shared_mutex>lg(this->mLocker);
+	return this->mConfig[key];
 }
 
 void libProp::EraseFBSpace(std::string& data)
