@@ -6,6 +6,5 @@ cmake_minimum_required (VERSION 3.8)
 project ("libProp")
 set(CMAKE_CXX_STANDARD 11)
 
-#add_library(${PROJECT_NAME} SHARED libProp.h libProp.cpp test.cpp)
 add_library(${PROJECT_NAME} SHARED libProp.h libProp.cpp ) 
-
+#add_executable(${PROJECT_NAME} libProp.h libProp.cpp main.cpp)//test

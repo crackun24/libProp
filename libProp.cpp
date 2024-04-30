@@ -5,20 +5,24 @@ using namespace libProp;
 
 void libProp::Value::CheckType(ValType type)
 {
-	if (this->mType != type)
+	if (this->type != type)
 		throw runtime_error("type error.");
 }
 
-Value::Value(string data)
+Value::Value(string data) :Value()
 {
-	this->mType = ValueType;
+	this->type = ValueType;
 	this->mData = data;
 }
 
-Value::Value(vector<Value> array)
+Value::Value(vector<Value> array) :Value()
 {
-	this->mType = ArrayType;//设置为数组的类型
+	this->type = ArrayType;//设置为数组的类型
 	this->mArray = move(array);
+}
+
+Value::Value() :isDataChanged(false)
+{
 }
 
 
@@ -59,7 +63,7 @@ Value::operator long long()
 	try {
 		return stoll(this->mData);
 	}
-	catch (const exception& e){
+	catch (const exception& e) {
 		throw runtime_error(errMsgPrefix + e.what());
 	}
 }
@@ -115,18 +119,21 @@ Value::operator bool()
 {
 	try
 	{
-		if(this->mData == "true")
+		if (this->mData == "true")
 		{
 			return true;
-		}else if(this->mData == "false")
+		}
+		else if (this->mData == "false")
 		{
 			return false;
-		}else//数据不合法
+		}
+		else//数据不合法
 		{
 			throw runtime_error("invalid bool data.");
 		}
-		
-	}catch (const exception &e)
+
+	}
+	catch (const exception& e)
 	{
 		throw runtime_error(errMsgPrefix + e.what());
 	}
@@ -135,6 +142,28 @@ Value::operator bool()
 Value::~Value()
 {
 }
+
+std::string Value::toFileStr()
+{
+	if (this->type == ValueType)
+	{
+		return this->mData;
+	}
+	else if (this->type == ArrayType)
+	{
+		stringstream tempData;
+		tempData << "[";
+		for (auto it = this->mArray.begin(); it != this->mArray.end(); it++)
+		{
+			if (it != this->mArray.end())
+			{
+				tempData << (*it).toFileStr() << ",";
+			}
+		}
+		tempData << "]";
+	}
+}
+
 
 void Config::ParseLineStr(std::string& data)
 {
@@ -177,20 +206,39 @@ void Config::ParseLineStr(std::string& data)
 }
 
 
+bool Config::isDataChanged()
+{
+	bool isChanged = false;//数据是否改变
+
+	for (auto& it : this->mConfMap)//遍历数据,判断数据是否有更改
+	{
+		isChanged ^= it.second.isDataChanged;
+	}
+
+	return isChanged;
+}
+
 Config Config::Parse(std::string&& filePath)
 {
 	try {
 		fstream fs(filePath);
 		if (!fs.is_open())
+		{
 			throw runtime_error("Could not open file.");
+		}
 
 		string temp;
 		Config conf;//配置文件对象
+
 		while (getline(fs, temp))//一行行读取配置文件信息
 		{
 			conf.ParseLineStr(temp);//解析单行数据
 		}
-		return move(conf);
+
+		fs.close();//关闭文件
+		conf.mFilePath = filePath;
+
+		return conf;
 	}
 	catch (const exception& e)
 	{
@@ -198,17 +246,43 @@ Config Config::Parse(std::string&& filePath)
 	}
 }
 
-Config::Config(const Config& conf)
-{
-	this->mConfMap = conf.mConfMap;
-}
 
 
 Config libProp::Config::operator=(const Config& conf)
 {
 	this->mConfMap = conf.mConfMap;
+	this->mFilePath = conf.mFilePath;
 	return *this;
 }
+
+void Config::save()
+{
+	for (auto& it : this->mConfMap)
+	{
+		it.second.isDataChanged = false;//更新保存状态
+	}
+
+	stringstream data;//写入到硬盘的数据
+	for (auto it : this->mConfMap)//遍历哈希表
+	{
+		data << it.first << " = " << it.second.toFileStr() << endl;
+		cout << "key:" << it.first << endl;
+	}
+
+	cout << "file data:" << data.str();
+
+	fstream fs(this->mFilePath, ios::out);
+	if (!fs.is_open())
+	{
+		throw runtime_error("Could not open the config file for writing.");
+	}
+
+	fs << data.str();
+	fs.close();//关闭文件
+	cout << "saved" << endl;//BUG
+
+}
+
 
 Config::Config()
 {
@@ -216,14 +290,23 @@ Config::Config()
 
 Config::~Config()
 {
+	if (isDataChanged())//判断是否需要保存
+	{
+		this->save();
+	}
 }
 
-Value Config::operator[](const std::string& key)
+Value& Config::operator[](const std::string& key)
 {
+	if (this->mConfMap.find(key) == this->mConfMap.end())//无法找到键值
+	{
+		throw runtime_error("Could not find the key.");
+	}
+
 	return this->mConfMap[key];
 }
 
-ConfigGuard::ConfigGuard(Config& conf):mConfig(conf)
+ConfigGuard::ConfigGuard(Config& conf) :mConfig(conf)
 {}
 
 Value ConfigGuard::operator[](const std::string& key)
