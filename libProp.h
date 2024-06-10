@@ -60,6 +60,7 @@ namespace libProp {
 			ss << std::boolalpha;
 			ss << data;
 			this->mData = ss.str();
+			this->isDataChanged = true;
 			return *this;
 		}
 
@@ -70,6 +71,7 @@ namespace libProp {
 	{
 	private:
 		std::map<std::string, Value>mConfMap;//配置文件映射表
+		std::vector<std::string>mCommentsList;//注释列表
 		void ParseLineStr(std::string& data);//解析一行数据
 		std::string mFilePath;//配置文件的路径
 		bool isDataChanged();//判断数据是否改变

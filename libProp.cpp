@@ -167,6 +167,12 @@ std::string Value::toFileStr()
 
 void Config::ParseLineStr(std::string& data)
 {
+	if(data.at(0) == '#')//判断是否为注释
+	{
+		this->mCommentsList.push_back(data);//将注释放入到注释列表中
+		return;
+	}
+
 	if (data == "" || data.find("=") == string::npos)//判断是否为有效的行
 		return;//不是有效行返回
 	string& keyData = data.substr(0, data.find("="));//获取等号前面的数据
@@ -208,14 +214,14 @@ void Config::ParseLineStr(std::string& data)
 
 bool Config::isDataChanged()
 {
-	bool isChanged = false;//数据是否改变
-
 	for (auto& it : this->mConfMap)//遍历数据,判断数据是否有更改
 	{
-		isChanged ^= it.second.isDataChanged;
+		if(it.second.isDataChanged)
+		{
+			return true;
+		}
 	}
-
-	return isChanged;
+	return false;
 }
 
 Config Config::Parse(std::string&& filePath)
@@ -263,13 +269,16 @@ void Config::save()
 	}
 
 	stringstream data;//写入到硬盘的数据
-	for (auto it : this->mConfMap)//遍历哈希表
+	for(auto &it : this->mCommentsList)
 	{
-		data << it.first << " = " << it.second.toFileStr() << endl;
-		cout << "key:" << it.first << endl;
+		data << it<<endl;//写入注释
 	}
 
-	cout << "file data:" << data.str();
+	for (auto &it : this->mConfMap)//遍历哈希表
+	{
+		data << it.first << " = " << it.second.toFileStr() << endl;
+	}
+
 
 	fstream fs(this->mFilePath, ios::out);
 	if (!fs.is_open())
@@ -279,8 +288,6 @@ void Config::save()
 
 	fs << data.str();
 	fs.close();//关闭文件
-	cout << "saved" << endl;//BUG
-
 }
 
 

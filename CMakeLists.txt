@@ -7,4 +7,4 @@ project ("libProp")
 set(CMAKE_CXX_STANDARD 11)
 
 add_library(${PROJECT_NAME} SHARED libProp.h libProp.cpp ) 
-#add_executable(${PROJECT_NAME} libProp.h libProp.cpp main.cpp)//test
+#add_executable(${PROJECT_NAME} libProp.h libProp.cpp main.cpp) #test
