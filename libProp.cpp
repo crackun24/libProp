@@ -306,21 +306,6 @@ Value& Config::operator[](const std::string& key)
 	return this->mConfMap[key];
 }
 
-ConfigGuard::ConfigGuard(Config& conf) :mConfig(conf)
-{}
-
-Value ConfigGuard::operator[](const std::string& key)
-{
-	lock_guard<shared_mutex>lg(this->mLocker);
-	return this->mConfig[key];
-}
-
-Value ConfigGuard::GetEntry(const std::string& key)
-{
-	lock_guard<shared_mutex>lg(this->mLocker);
-	return this->mConfig[key];
-}
-
 void libProp::EraseFBSpace(std::string& data)
 {
 	data.erase(0, data.find_first_not_of(" "));//删除前面的空格
