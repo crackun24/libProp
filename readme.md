@@ -1,4 +1,4 @@
-# libProp:一个易于使用的properties解析库
+﻿# libProp:一个易于使用的properties解析库
 ### 使用方法简述
 - 导入头文件 "libProp"
 - 使用Config对象的静态构造函数Parse()构造配置文件对象
@@ -29,3 +29,14 @@ int main(){
 	cout << conf["testArray"][1].as<int>();//输出 1234
 }
 ~~~
+##### 修改文件的代码
+~~~ 
+#include <libProp>//导入头文件
+
+int main(){
+	libProp::Config conf = libProp::Config::Parse("./xxx.properties");
+	conf["testKey"] = "test";//修改为 test
+	conf["testArray"][0] = 1;//修改为 1
+}
+~~~
+
